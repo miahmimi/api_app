@@ -46,6 +46,10 @@ class AccessBDD {
                     return $this->selectAllcommande();
                 case "commanderevue" :
                     return $this->selectAllcommanderevue();
+                case "exemplairedate" :
+                    return $this->selectdateachatexemplaire();
+                case "commandedvd" :
+                    return $this->selectallcommandedvd();
                 default:
                     // cas d'un select portant sur une table simple, avec tri sur le libellé
                     return $this->selectAllTableSimple($table);
@@ -55,10 +59,25 @@ class AccessBDD {
         }
     }
     
-    //public function selectAllcommanderevue(){
-        
-    //    $req=""
-   // }
+     public function selectallcommandedvd(){
+          
+         $req="select c.dateCommande , c.montant , cd.nbExemplaire, cd.idLivreDvd , c.id,s.etape from commandedocument cd Join commande c on cd.id = c.id join dvd V on V.id=cd.idLivreDvd  ";
+        $req .= "Join Suivi s on cd.idetape= s.id";
+        return $this->conn->query($req);
+    }
+    public function selectdateachatexemplaire($id){
+        $param = array(
+                "numero" => $id
+        );
+        $req ="select dateAchat from exemplaire  where numero =:id ";
+        return $this->conn->query($req,$param);
+    }
+    
+    public function selectAllcommanderevue(){
+          
+        $req="select c.id ,c.dateCommande , c.montant , a.dateFinAbonnement , a.idRevue, e.numero from   abonnement a join commande c on c.id= a.id left join exemplaire e on e.id = a.idRevue ";
+        return $this->conn->query($req);
+    }
     public function selectAllcommandelivre(){
         $req="select c.dateCommande , c.montant , cd.nbExemplaire, cd.idLivreDvd , c.id,s.etape from commandedocument cd Join commande c on cd.id = c.id  ";
         $req .= "Join Suivi s on cd.idetape= s.id";
