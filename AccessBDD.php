@@ -50,6 +50,8 @@ class AccessBDD {
                     return $this->selectdateachatexemplaire();
                 case "commandedvd" :
                     return $this->selectallcommandedvd();
+                case "authentification" :
+                    return $this->selectprofil();
                 default:
                     // cas d'un select portant sur une table simple, avec tri sur le libellé
                     return $this->selectAllTableSimple($table);
@@ -58,10 +60,21 @@ class AccessBDD {
             return null;
         }
     }
+     
+    public function selectprofil($login){
+        //$login = $profil["login"];
+         //$pwd = $profil["pwd"];
+        $param = array(
+            "login"=> $login
+        );
+        $req = "select * from utilisateur where login =:login   ";
+        return $this->conn->query($req);
+                
+    }
     
      public function selectallcommandedvd(){
           
-         $req="select c.dateCommande , c.montant , cd.nbExemplaire, cd.idLivreDvd , c.id,s.etape from commandedocument cd Join commande c on cd.id = c.id join dvd V on V.id=cd.idLivreDvd  ";
+        $req="select c.dateCommande , c.montant , cd.nbExemplaire, cd.idLivreDvd , c.id,s.etape from commandedocument cd Join commande c on cd.id = c.id join dvd V on V.id=cd.idLivreDvd  ";
         $req .= "Join Suivi s on cd.idetape= s.id";
         return $this->conn->query($req);
     }
@@ -69,7 +82,7 @@ class AccessBDD {
         $param = array(
                 "numero" => $id
         );
-        $req ="select dateAchat from exemplaire  where numero =:id ";
+        $req ="select dateAchat from exemplaire  where numero =:numero ";
         return $this->conn->query($req,$param);
     }
     
